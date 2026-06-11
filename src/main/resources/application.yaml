@@ -1,3 +1,22 @@
 spring:
   application:
     name: k4rta-core
+
+  datasource:
+    url: jdbc:postgresql://192.168.1.5:5432/k4rta
+    username: postgres
+    password: mysecretpassword
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+k4rta:
+  jwt:
+    secret: d5a6428e92aceb22c6025bf525f913f6bcb9436b1a604ecf6b79c8286a71583827a7616517465f8415f6fcbd18f9a4c9bc44f6fc7e619faa29f6a301e89dacb2
+    expiration: 86400000
