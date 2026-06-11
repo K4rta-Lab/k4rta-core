@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: k4rta-core
