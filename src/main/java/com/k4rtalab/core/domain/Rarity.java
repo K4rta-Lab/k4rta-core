@@ -24,8 +24,4 @@ public class Rarity {
     @NotBlank
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-
-    @PositiveOrZero
-    @Column(name = "ev_points", nullable = false)
-    private int evPoints;
 }

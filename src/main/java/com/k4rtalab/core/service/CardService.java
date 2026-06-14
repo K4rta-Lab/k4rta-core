@@ -39,28 +39,4 @@ public class CardService {
     public List<PlayerCard> findCardsByOwner(UUID ownerId) {
         return playerCardRepository.findByOwnerId(ownerId);
     }
-
-    @Transactional
-    public PlayerCard distributeEvPoints(UUID playerCardId, UUID requestingPlayerId, int evHp, int evAtk, int evDef, int evSpd) {
-        PlayerCard card = findPlayerCardById(playerCardId);
-
-        if (!card.getOwner().getId().equals(requestingPlayerId))
-            throw new UnauthorizedActionException("Card does not belong to this player: " + requestingPlayerId);
-
-        int maxEv = card.getBaseCard().getRarity().getEvPoints();
-        int total = evHp + evAtk + evDef + evSpd;
-
-        if (evHp < 0 || evAtk < 0 || evDef < 0 || evSpd < 0)
-            throw new IllegalArgumentException("EV points cannot be negative");
-
-        if (total > maxEv)
-            throw new IllegalArgumentException("EV points exceed limit for this rarity. Max: " + maxEv + ", got: " + total);
-
-        card.setEvHp(evHp);
-        card.setEvAtk(evAtk);
-        card.setEvDef(evDef);
-        card.setEvSpd(evSpd);
-
-        return playerCardRepository.save(card);
-    }
 }

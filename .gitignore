@@ -42,3 +42,6 @@ logs/
 
 .env
 application-prod.yml
+
+# Rewind
+.rewind-brief.md

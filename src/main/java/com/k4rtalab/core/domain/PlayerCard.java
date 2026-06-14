@@ -50,34 +50,10 @@ public class PlayerCard {
     @Column(name = "stat_spd", nullable = false)
     private int statSpd;
 
-    @PositiveOrZero
-    @Column(name = "ev_hp", nullable = false)
-    @Builder.Default
-    private int evHp = 0;
-
-    @PositiveOrZero
-    @Column(name = "ev_atk", nullable = false)
-    @Builder.Default
-    private int evAtk = 0;
-
-    @PositiveOrZero
-    @Column(name = "ev_def", nullable = false)
-    @Builder.Default
-    private int evDef = 0;
-
-    @PositiveOrZero
-    @Column(name = "ev_spd", nullable = false)
-    @Builder.Default
-    private int evSpd = 0;
-
     @Column(name = "pack_seed")
     private Long packSeed;
 
     @CreationTimestamp
     @Column(name = "obtained_at", updatable = false)
     private LocalDateTime obtainedAt;
-
-    public int getTotalEvPoints() {
-        return evHp + evAtk + evDef + evSpd;
-    }
 }
