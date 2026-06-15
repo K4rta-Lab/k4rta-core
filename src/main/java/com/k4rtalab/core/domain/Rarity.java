@@ -2,9 +2,11 @@ package com.k4rtalab.core.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -24,4 +26,12 @@ public class Rarity {
     @NotBlank
     @Column(name = "name", nullable = false, unique = true)
     private String name;
+
+    @NotNull
+    @Column(name = "multiplier", nullable = false, precision = 4, scale = 2)
+    private BigDecimal multiplier;
+
+    @PositiveOrZero
+    @Column(name = "recycle_value", nullable = false)
+    private int recycleValue;
 }

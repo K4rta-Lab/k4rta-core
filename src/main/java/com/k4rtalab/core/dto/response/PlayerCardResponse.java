@@ -13,6 +13,7 @@ public class PlayerCardResponse {
     private UUID baseCardId;
     private String cardName;
     private String rarity;
+    private int recycleValue;
     private String imageUrl;
     private int statHp;
     private int statAtk;

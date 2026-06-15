@@ -2,7 +2,6 @@ package com.k4rtalab.core.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,42 +27,53 @@ public class BaseCard {
     @Column(nullable = false)
     private String name;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rarity_id", nullable = false)
-    private Rarity rarity;
+    @PositiveOrZero
+    @Column(name = "stat_hp_min", nullable = false)
+    private int statHpMin;
 
     @PositiveOrZero
-    @Column(name = "stat_hp_base", nullable = false)
-    private int statHpBase;
+    @Column(name = "stat_hp_avg", nullable = false)
+    private int statHpAvg;
 
     @PositiveOrZero
-    @Column(name = "stat_hp_range", nullable = false)
-    private int statHpRange;
+    @Column(name = "stat_hp_max", nullable = false)
+    private int statHpMax;
 
     @PositiveOrZero
-    @Column(name = "stat_atk_base", nullable = false)
-    private int statAtkBase;
+    @Column(name = "stat_atk_min", nullable = false)
+    private int statAtkMin;
 
     @PositiveOrZero
-    @Column(name = "stat_atk_range", nullable = false)
-    private int statAtkRange;
+    @Column(name = "stat_atk_avg", nullable = false)
+    private int statAtkAvg;
 
     @PositiveOrZero
-    @Column(name = "stat_def_base", nullable = false)
-    private int statDefBase;
+    @Column(name = "stat_atk_max", nullable = false)
+    private int statAtkMax;
 
     @PositiveOrZero
-    @Column(name = "stat_def_range", nullable = false)
-    private int statDefRange;
+    @Column(name = "stat_def_min", nullable = false)
+    private int statDefMin;
 
     @PositiveOrZero
-    @Column(name = "stat_spd_base", nullable = false)
-    private int statSpdBase;
+    @Column(name = "stat_def_avg", nullable = false)
+    private int statDefAvg;
 
     @PositiveOrZero
-    @Column(name = "stat_spd_range", nullable = false)
-    private int statSpdRange;
+    @Column(name = "stat_def_max", nullable = false)
+    private int statDefMax;
+
+    @PositiveOrZero
+    @Column(name = "stat_spd_min", nullable = false)
+    private int statSpdMin;
+
+    @PositiveOrZero
+    @Column(name = "stat_spd_avg", nullable = false)
+    private int statSpdAvg;
+
+    @PositiveOrZero
+    @Column(name = "stat_spd_max", nullable = false)
+    private int statSpdMax;
 
     @Column(name = "image_url")
     private String imageUrl;

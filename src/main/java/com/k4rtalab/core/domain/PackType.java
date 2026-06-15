@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -35,6 +36,13 @@ public class PackType {
     @Builder.Default
     int cardCount = 5;
 
+    @PositiveOrZero
+    @Column(name = "cost", nullable = false)
+    private int cost;
+
+    @OneToMany(mappedBy = "packType", fetch = FetchType.LAZY)
+    private List<PackTypeRarityWeight> rarityWeights;
+
     @Column(name = "available_from")
     private LocalDateTime availableFrom;
 
@@ -42,6 +50,6 @@ public class PackType {
     private LocalDateTime availableUntil;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 }

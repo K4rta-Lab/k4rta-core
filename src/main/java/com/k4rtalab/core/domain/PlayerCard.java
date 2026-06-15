@@ -34,6 +34,11 @@ public class PlayerCard {
     @JoinColumn(name = "base_card_id", nullable = false)
     private BaseCard baseCard;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rarity_id", nullable = false)
+    private Rarity rarity;
+
     @Min(0)
     @Column(name = "stat_hp", nullable = false)
     private int statHp;

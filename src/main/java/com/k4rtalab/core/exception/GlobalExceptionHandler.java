@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unexpected error"));
     }
 
-    public record ErrorResponse(int status, String message, Object detilas, LocalDateTime timestamp) {
+    public record ErrorResponse(int status, String message, Object details, LocalDateTime timestamp) {
         public ErrorResponse(int status, String message) {
             this(status, message, null, LocalDateTime.now());
         }

@@ -11,12 +11,25 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  web:
+    error:
+      include-message: always
+      include-stacktrace: always
 
 k4rta:
   jwt:
     secret: d5a6428e92aceb22c6025bf525f913f6bcb9436b1a604ecf6b79c8286a71583827a7616517465f8415f6fcbd18f9a4c9bc44f6fc7e619faa29f6a301e89dacb2
     expiration: 86400000
+
+logging:
+  level:
+    org.flywaydb: DEBUG
