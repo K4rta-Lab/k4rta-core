@@ -9,6 +9,14 @@ import com.k4rtalab.core.dto.response.TradeListingResponse;
 import com.k4rtalab.core.dto.response.TradeRequestResponse;
 import com.k4rtalab.core.mapper.PlayerCardMapper;
 import com.k4rtalab.core.service.TradeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +29,20 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/trade")
 @RequiredArgsConstructor
+@Tag(name = "Trade", description = "Endpoints for managing trades")
+@SecurityRequirement(name = "Bearer Authentication")
 public class TradeController {
 
     private final TradeService tradeService;
 
-    // todo: add filters
+    @Operation(summary = "Get all listing trades with filters")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful operation",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TradeListingResponse.class)))
+            )
+    })
     @GetMapping("/boards/listing")
     public ResponseEntity<List<TradeListingResponse>> getAllListingTrades(
             @RequestParam(defaultValue = "0") int page,
@@ -42,7 +59,14 @@ public class TradeController {
         );
     }
 
-    // todo: add filters
+    @Operation(summary = "Get all request trades with filters")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful operation",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TradeListingResponse.class)))
+            )
+    })
     @GetMapping("/boards/request")
     public ResponseEntity<List<TradeRequestResponse>> getAllRequestTrades(
             @RequestParam(defaultValue = "0") int page,
@@ -60,6 +84,14 @@ public class TradeController {
         );
     }
 
+    @Operation(summary = "Create a new trade listing")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listing created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TradeListingResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Card does not belong to player", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content())
+    })
     @PostMapping("/listing")
     public ResponseEntity<TradeListingResponse> createListing(
             @AuthenticationPrincipal Player owner,
@@ -68,6 +100,14 @@ public class TradeController {
         return ResponseEntity.ok(toListingResponse(tradeService.createListing(owner.getId(), request.getOfferedCardId(), request.getWantedBaseCardId())));
     }
 
+    @Operation(summary = "Cancel a trade listing")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Listing cancelled successfully"),
+            @ApiResponse(responseCode = "400", description = "Listing not open", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Not authorized to cancel", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Listing not found", content = @Content())
+    })
     @DeleteMapping("/listing/{listingId}")
     public ResponseEntity<Void> cancelListing(
             @AuthenticationPrincipal Player requestingPlayer,
@@ -77,6 +117,13 @@ public class TradeController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Create a new trade request")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Request created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TradeRequestResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content())
+    })
     @PostMapping("/request")
     public ResponseEntity<TradeRequestResponse> createRequest(
             @AuthenticationPrincipal Player owner,
@@ -85,6 +132,14 @@ public class TradeController {
         return ResponseEntity.ok(toRequestResponse(tradeService.createRequest(owner.getId(), request.getWantedBaseCardId())));
     }
 
+    @Operation(summary = "Cancel a trade request")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Request cancelled successfully"),
+            @ApiResponse(responseCode = "400", description = "Request not open", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Not authorized to cancel", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Request not found", content = @Content())
+    })
     @DeleteMapping("/request/{requestId}")
     public ResponseEntity<Void> cancelRequest(
             @AuthenticationPrincipal Player requestingPlayer,
@@ -94,6 +149,14 @@ public class TradeController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Create an offer for a trade request")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Offer created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OfferResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input or request not open", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Card does not belong to player", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content())
+    })
     @PostMapping("/offer")
     public ResponseEntity<OfferResponse> createOffer(
             @AuthenticationPrincipal Player owner,
@@ -102,6 +165,14 @@ public class TradeController {
         return toOfferResponse(tradeService.createOffer(request.getRequestId(), owner.getId(), request.getOfferedCardId()));
     }
 
+    @Operation(summary = "Accept a trade offer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Offer accepted successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TradeListingResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Request not open or offer not pending", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Not authorized to accept", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Offer not found", content = @Content())
+    })
     @PatchMapping("/offers/{offerId}/accept")
     public ResponseEntity<TradeListingResponse> acceptOffer(
             @AuthenticationPrincipal Player player,
@@ -111,6 +182,14 @@ public class TradeController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Reject a trade offer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Offer rejected successfully"),
+            @ApiResponse(responseCode = "400", description = "Offer not pending", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "403", description = "Not authorized to reject", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "Offer not found", content = @Content())
+    })
     @PatchMapping("/offers/{offerId}/reject")
     public ResponseEntity<Void> rejectOffer(
             @AuthenticationPrincipal Player player,

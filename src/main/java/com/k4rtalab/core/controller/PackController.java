@@ -12,6 +12,14 @@ import com.k4rtalab.core.mapper.PlayerCardMapper;
 import com.k4rtalab.core.repository.PackTypeCardRepository;
 import com.k4rtalab.core.repository.PackTypeRepository;
 import com.k4rtalab.core.service.PackService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,18 +32,37 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/packs")
 @RequiredArgsConstructor
+@Tag(name = "Packs", description = "Endpoints for managing card packs")
+@SecurityRequirement(name = "Bearer Authentication")
 public class PackController {
 
     private final PackService packService;
     private final PackTypeRepository packTypeRepository;
     private final PackTypeCardRepository packTypeCardRepository;
 
+    @Operation(summary = "Get all available pack types")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful operation",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PackTypeResponse.class))
+            )
+    })
     @GetMapping
     public ResponseEntity<List<PackTypeResponse>> getAllPacks() {
         List<PackType> packs = packTypeRepository.findAll();
         return ResponseEntity.ok(packs.stream().map(PackController::toPackTypeResponse).toList());
     }
 
+    @Operation(summary = "Get the card pool for a specific pack type")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful operation",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(type = "array", implementation = String.class)))
+            ),
+            @ApiResponse(responseCode = "404", description = "PackType not found", content = @Content)
+    })
     @GetMapping("/pool/{packTypeId}")
     public ResponseEntity<List<String>> getPackPool(@PathVariable UUID packTypeId) {
         List<PackTypeCard> pool = packTypeCardRepository.findByPackTypeId(packTypeId);
@@ -48,6 +75,16 @@ public class PackController {
         return ResponseEntity.ok(cardNames);
     }
 
+    @Operation(summary = "Open a card pack")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Pack opened successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PackOpenResponse.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid input or insufficient funds", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+            @ApiResponse(responseCode = "404", description = "PackType not found", content = @Content)
+    })
     @PostMapping("/open")
     public ResponseEntity<PackOpenResponse> openPack(
             @AuthenticationPrincipal Player player,

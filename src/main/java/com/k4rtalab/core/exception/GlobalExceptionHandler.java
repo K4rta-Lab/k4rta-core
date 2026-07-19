@@ -2,8 +2,9 @@ package com.k4rtalab.core.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,6 +24,20 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Invalid username or password"));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Authentication failed"));
+    }
+
     @ExceptionHandler(UnauthorizedActionException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedActionException ex) {
         return ResponseEntity
@@ -30,14 +45,12 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.FORBIDDEN.value(), ex.getMessage()));
     }
 
-
     @ExceptionHandler(K4rtaException.class)
     public ResponseEntity<ErrorResponse> handleK4rta(K4rtaException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {

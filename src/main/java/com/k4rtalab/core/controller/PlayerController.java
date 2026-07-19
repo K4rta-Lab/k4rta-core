@@ -9,32 +9,64 @@ import com.k4rtalab.core.exception.ResourceNotFoundException;
 import com.k4rtalab.core.exception.UnauthorizedActionException;
 import com.k4rtalab.core.repository.PlayerCardRepository;
 import com.k4rtalab.core.service.CardService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/players")
 @RequiredArgsConstructor
+@Tag(name = "Player", description = "Endpoints for managing player data")
+@SecurityRequirement(name = "Bearer Authentication")
 public class PlayerController {
     private final CardService cardService;
     private final PlayerCardRepository playerCardRepository;
 
+    @Operation(summary = "Get current player's stats")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+            @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content()),
+    })
     @GetMapping("/me/stats")
     public ResponseEntity<PlayerStatsResponse> getStats(@AuthenticationPrincipal Player player) {
         return ResponseEntity.ok(toStatsResponse(player));
     }
 
+    @Operation(summary = "Get current player's card collection")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful operation",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PlayerCardResponse.class)))
+            ),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content())
+    })
     @GetMapping("/me/collection")
     public ResponseEntity<List<PlayerCardResponse>> getCollection(@AuthenticationPrincipal Player player) {
         List<PlayerCard> cards = cardService.findCardsByOwner(player.getId());
         return ResponseEntity.ok(cards.stream().map(PlayerController::toCardResponse).toList());
     }
 
+    @Operation(summary = "Recycle player cards")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Cards recycled successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Card not found")
+    })
     @PostMapping("/me/cards/recycle")
     public ResponseEntity<Void> recycle(@AuthenticationPrincipal Player player, @Valid @RequestBody RecycleRequest request) {
         List<PlayerCard> cards = playerCardRepository.findAllById(request.getCardIds());
