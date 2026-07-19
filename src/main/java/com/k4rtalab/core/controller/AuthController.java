@@ -4,7 +4,6 @@ import com.k4rtalab.core.domain.Player;
 import com.k4rtalab.core.dto.request.LoginRequest;
 import com.k4rtalab.core.dto.request.RegisterRequest;
 import com.k4rtalab.core.dto.response.AuthResponse;
-import com.k4rtalab.core.exception.K4rtaException;
 import com.k4rtalab.core.security.JwtUtil;
 import com.k4rtalab.core.service.PlayerService;
 import jakarta.validation.Valid;

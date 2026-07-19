@@ -7,8 +7,8 @@ import com.k4rtalab.core.domain.PlayerCard;
 import com.k4rtalab.core.dto.request.OpenPackRequest;
 import com.k4rtalab.core.dto.response.PackOpenResponse;
 import com.k4rtalab.core.dto.response.PackTypeResponse;
-import com.k4rtalab.core.dto.response.PlayerCardResponse;
 import com.k4rtalab.core.exception.ResourceNotFoundException;
+import com.k4rtalab.core.mapper.PlayerCardMapper;
 import com.k4rtalab.core.repository.PackTypeCardRepository;
 import com.k4rtalab.core.repository.PackTypeRepository;
 import com.k4rtalab.core.service.PackService;
@@ -64,7 +64,7 @@ public class PackController {
                 .packTypeId(packType.getId())
                 .packTypeName(packType.getName())
                 .seed(seed)
-                .cards(cards.stream().map(PackController::toCardResponse).toList())
+                .cards(cards.stream().map(PlayerCardMapper::toCardResponse).toList())
                 .build();
 
         return ResponseEntity.ok(response);
@@ -81,22 +81,6 @@ public class PackController {
                 .cost(pack.getCost())
                 .availableFrom(pack.getAvailableFrom())
                 .availableUntil(pack.getAvailableUntil())
-                .build();
-    }
-
-    private static PlayerCardResponse toCardResponse(PlayerCard card) {
-        return PlayerCardResponse.builder()
-                .id(card.getId())
-                .baseCardId(card.getBaseCard().getId())
-                .cardName(card.getBaseCard().getName())
-                .rarity(card.getRarity().getName())
-                .recycleValue(card.getRarity().getRecycleValue())
-                .imageUrl(card.getBaseCard().getImageUrl())
-                .statHp(card.getStatHp())
-                .statAtk(card.getStatAtk())
-                .statDef(card.getStatDef())
-                .statSpd(card.getStatSpd())
-                .obtainedAt(card.getObtainedAt())
                 .build();
     }
 }
