@@ -46,7 +46,7 @@ public class Player implements UserDetails {
     @PositiveOrZero
     @Column(name = "coins", nullable = false)
     @Builder.Default
-    private int coins = 0;
+    private int coins = 150;
 
     @Column(name = "last_reward", nullable = false)
     @Builder.Default

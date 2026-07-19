@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -44,5 +45,15 @@ public class PlayerService {
                 .build();
 
         return playerRepository.save(player);
+    }
+
+    public void claimDailyReward(Player p) {
+        LocalDateTime now = LocalDateTime.now();
+        if (p.getLastReward().isAfter(now.minusHours(24)))
+            throw new K4rtaException("Reward already claimed today");
+
+        p.setCoins(p.getCoins() + 150);
+        p.setLastReward(now);
+        playerRepository.save(p);
     }
 }

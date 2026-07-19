@@ -9,6 +9,7 @@ import com.k4rtalab.core.exception.ResourceNotFoundException;
 import com.k4rtalab.core.exception.UnauthorizedActionException;
 import com.k4rtalab.core.repository.PlayerCardRepository;
 import com.k4rtalab.core.service.CardService;
+import com.k4rtalab.core.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,6 +34,7 @@ import java.util.List;
 public class PlayerController {
     private final CardService cardService;
     private final PlayerCardRepository playerCardRepository;
+    private final PlayerService playerService;
 
     @Operation(summary = "Get current player's stats")
     @ApiResponses(value = {
@@ -80,6 +82,18 @@ public class PlayerController {
         // TODO: calcular monedas según raridad de cada carta y dárselas al jugador
         playerCardRepository.deleteAllInBatch(cards);
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Claim daily reward")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Reward claimed successfully", content = @Content()),
+            @ApiResponse(responseCode = "400", description = "Reward already claimed today", content = @Content()),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
+    })
+    @PostMapping("/me/claim-reward")
+    public ResponseEntity<Void> claimReward(@AuthenticationPrincipal Player player) {
+        playerService.claimDailyReward(player);
         return ResponseEntity.noContent().build();
     }
 
