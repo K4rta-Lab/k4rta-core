@@ -8,6 +8,7 @@ import com.k4rtalab.core.dto.response.OfferResponse;
 import com.k4rtalab.core.dto.response.TradeListingResponse;
 import com.k4rtalab.core.dto.response.TradeRequestResponse;
 import com.k4rtalab.core.mapper.PlayerCardMapper;
+import com.k4rtalab.core.mapper.TradeMapper;
 import com.k4rtalab.core.service.TradeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,6 +35,8 @@ import java.util.UUID;
 public class TradeController {
 
     private final TradeService tradeService;
+    private final PlayerCardMapper playerCardMapper;
+    private final TradeMapper tradeMapper;
 
     @Operation(summary = "Get all listing trades with filters")
     @ApiResponses(value = {
@@ -51,12 +54,7 @@ public class TradeController {
             @RequestParam(required = false) UUID wantedBaseCardId,
             @RequestParam(required = false) UUID ownerId
     ) {
-        return ResponseEntity.ok(
-                tradeService.getAllListingTrades(page, size, status, wantedBaseCardId, ownerId)
-                        .stream()
-                        .map(TradeController::toListingResponse)
-                        .toList()
-        );
+        return ResponseEntity.ok(tradeMapper.toListingResponses(tradeService.getAllListingTrades(page, size, status, wantedBaseCardId, ownerId)));
     }
 
     @Operation(summary = "Get all request trades with filters")
@@ -75,13 +73,7 @@ public class TradeController {
             @RequestParam(required = false) UUID wantedBaseCardId,
             @RequestParam(required = false) UUID ownerId
     ) {
-
-        return ResponseEntity.ok(
-                tradeService.getAllRequestTrades(page, size, status, wantedBaseCardId, ownerId)
-                        .stream()
-                        .map(TradeController::toRequestResponse)
-                        .toList()
-        );
+        return ResponseEntity.ok(tradeMapper.toRequestResponses(tradeService.getAllRequestTrades(page, size, status, wantedBaseCardId, ownerId)));
     }
 
     @Operation(summary = "Create a new trade listing")
@@ -97,7 +89,7 @@ public class TradeController {
             @AuthenticationPrincipal Player owner,
             @Valid @RequestBody CreateListingRequest request
     ) {
-        return ResponseEntity.ok(toListingResponse(tradeService.createListing(owner.getId(), request.getOfferedCardId(), request.getWantedBaseCardId())));
+        return ResponseEntity.ok(tradeMapper.toListingResponse(tradeService.createListing(owner.getId(), request.getOfferedCardId(), request.getWantedBaseCardId())));
     }
 
     @Operation(summary = "Cancel a trade listing")
@@ -129,7 +121,7 @@ public class TradeController {
             @AuthenticationPrincipal Player owner,
             @Valid @RequestBody CreateRequestRequest request
     ) {
-        return ResponseEntity.ok(toRequestResponse(tradeService.createRequest(owner.getId(), request.getWantedBaseCardId())));
+        return ResponseEntity.ok(tradeMapper.toRequestResponse(tradeService.createRequest(owner.getId(), request.getWantedBaseCardId())));
     }
 
     @Operation(summary = "Cancel a trade request")
@@ -162,7 +154,7 @@ public class TradeController {
             @AuthenticationPrincipal Player owner,
             @Valid @RequestBody CreateOfferRequest request
     ) {
-        return toOfferResponse(tradeService.createOffer(request.getRequestId(), owner.getId(), request.getOfferedCardId()));
+        return ResponseEntity.ok(tradeMapper.toOfferResponse(tradeService.createOffer(request.getRequestId(), owner.getId(), request.getOfferedCardId())));
     }
 
     @Operation(summary = "Accept a trade offer")
@@ -200,41 +192,41 @@ public class TradeController {
     }
 
     // --- Mappers ---
-
-    private static TradeListingResponse toListingResponse(TradeListing listing) {
-        return TradeListingResponse.builder()
-                .id(listing.getId())
-                .ownerId(listing.getOwner().getId())
-                .ownerUsername(listing.getOwner().getUsername())
-                .offeredCard(PlayerCardMapper.toCardResponse(listing.getOfferedCard()))
-                .wantedBaseCardId(listing.getWantedBaseCard().getId())
-                .wantedBaseCardName(listing.getWantedBaseCard().getName())
-                .status(listing.getStatus().name())
-                .createdAt(listing.getCreatedAt())
-                .build();
-    }
-
-    private static TradeRequestResponse toRequestResponse(TradeRequest request) {
-        return TradeRequestResponse.builder()
-                .id(request.getId())
-                .ownerId(request.getOwner().getId())
-                .ownerUsername(request.getOwner().getUsername())
-                .wantedBaseCardId(request.getWantedBaseCard().getId())
-                .wantedBaseCardName(request.getWantedBaseCard().getName())
-                .status(request.getStatus().name())
-                .createdAt(request.getCreatedAt())
-                .build();
-    }
-
-    private static ResponseEntity<OfferResponse> toOfferResponse(TradeOffer offer) {
-        return ResponseEntity.ok(OfferResponse.builder()
-                .id(offer.getId())
-                .requestId(offer.getRequest().getId())
-                .offererId(offer.getOfferer().getId())
-                .offererUsername(offer.getOfferer().getUsername())
-                .offeredCard(PlayerCardMapper.toCardResponse(offer.getOfferedCard()))
-                .status(offer.getStatus().name())
-                .createdAt(offer.getCreatedAt())
-                .build());
-    }
+//
+//    private static TradeListingResponse toListingResponse(TradeListing listing) {
+//        return TradeListingResponse.builder()
+//                .id(listing.getId())
+//                .ownerId(listing.getOwner().getId())
+//                .ownerUsername(listing.getOwner().getUsername())
+//                .offeredCard(PlayerCardMapper.toCardResponse(listing.getOfferedCard()))
+//                .wantedBaseCardId(listing.getWantedBaseCard().getId())
+//                .wantedBaseCardName(listing.getWantedBaseCard().getName())
+//                .status(listing.getStatus().name())
+//                .createdAt(listing.getCreatedAt())
+//                .build();
+//    }
+//
+//    private static TradeRequestResponse toRequestResponse(TradeRequest request) {
+//        return TradeRequestResponse.builder()
+//                .id(request.getId())
+//                .ownerId(request.getOwner().getId())
+//                .ownerUsername(request.getOwner().getUsername())
+//                .wantedBaseCardId(request.getWantedBaseCard().getId())
+//                .wantedBaseCardName(request.getWantedBaseCard().getName())
+//                .status(request.getStatus().name())
+//                .createdAt(request.getCreatedAt())
+//                .build();
+//    }
+//
+//    private static ResponseEntity<OfferResponse> toOfferResponse(TradeOffer offer) {
+//        return ResponseEntity.ok(OfferResponse.builder()
+//                .id(offer.getId())
+//                .requestId(offer.getRequest().getId())
+//                .offererId(offer.getOfferer().getId())
+//                .offererUsername(offer.getOfferer().getUsername())
+//                .offeredCard(player .toCardResponse(offer.getOfferedCard()))
+//                .status(offer.getStatus().name())
+//                .createdAt(offer.getCreatedAt())
+//                .build());
+//    }
 }

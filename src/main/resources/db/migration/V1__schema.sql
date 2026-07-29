@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS rarities
 (
     id            UUID PRIMARY KEY,
     name          VARCHAR UNIQUE NOT NULL,
+    tier          INTEGER UNIQUE NOT NULL,
     multiplier    DECIMAL(4, 2)  NOT NULL,
     recycle_value INTEGER        NOT NULL
 );
@@ -37,7 +38,7 @@ CREATE TABLE IF NOT EXISTS base_cards
     stat_spd_avg   INTEGER NOT NULL,
     stat_spd_max   INTEGER NOT NULL,
     image_url      VARCHAR,
-    theme          VARCHAR,
+    slug           VARCHAR UNIQUE NOT NULL,
     contributed_by VARCHAR,
     created_at     TIMESTAMP DEFAULT now()
 );

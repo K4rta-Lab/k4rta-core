@@ -39,6 +39,7 @@ public class PackController {
     private final PackService packService;
     private final PackTypeRepository packTypeRepository;
     private final PackTypeCardRepository packTypeCardRepository;
+    private final PlayerCardMapper playerCardMapper;
 
     @Operation(summary = "Get all available pack types")
     @ApiResponses(value = {
@@ -101,7 +102,7 @@ public class PackController {
                 .packTypeId(packType.getId())
                 .packTypeName(packType.getName())
                 .seed(seed)
-                .cards(cards.stream().map(PlayerCardMapper::toCardResponse).toList())
+                .cards(playerCardMapper.toResponseList(cards))
                 .build();
 
         return ResponseEntity.ok(response);

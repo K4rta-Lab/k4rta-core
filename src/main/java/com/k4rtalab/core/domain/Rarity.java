@@ -27,6 +27,10 @@ public class Rarity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @NotBlank
+    @Column(name = "tier", nullable = false, unique = true)
+    private int tier;
+
     @NotNull
     @Column(name = "multiplier", nullable = false, precision = 4, scale = 2)
     private BigDecimal multiplier;

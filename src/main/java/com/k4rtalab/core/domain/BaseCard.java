@@ -78,8 +78,8 @@ public class BaseCard {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "theme")
-    private String theme;
+    @Column(name = "slug", nullable = false, unique = true)
+    private String slug;
 
     @Column(name = "contributed_by")
     private String contributedBy;

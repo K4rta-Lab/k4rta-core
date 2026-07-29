@@ -1,23 +1,23 @@
-package com.k4rtalab.core.dto.response;
+package com.k4rtalab.core.dto.model;
 
-import lombok.*;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerCardResponse {
+public class CardCollectionItemResponse {
     private UUID id;
-    private UUID baseCardId;
     private String cardName;
     private String rarity;
-    private int recycleValue;
     private String slug;
     private int statHp;
     private int statAtk;
     private int statDef;
     private int statSpd;
-    private LocalDateTime obtainedAt;
 }

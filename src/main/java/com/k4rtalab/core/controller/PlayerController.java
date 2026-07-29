@@ -2,6 +2,7 @@ package com.k4rtalab.core.controller;
 
 import com.k4rtalab.core.domain.Player;
 import com.k4rtalab.core.domain.PlayerCard;
+import com.k4rtalab.core.dto.model.CardCollectionItemResponse;
 import com.k4rtalab.core.dto.request.RecycleRequest;
 import com.k4rtalab.core.dto.response.PlayerCardResponse;
 import com.k4rtalab.core.dto.response.PlayerStatsResponse;
@@ -56,9 +57,8 @@ public class PlayerController {
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content())
     })
     @GetMapping("/me/collection")
-    public ResponseEntity<List<PlayerCardResponse>> getCollection(@AuthenticationPrincipal Player player) {
-        List<PlayerCard> cards = cardService.findCardsByOwner(player.getId());
-        return ResponseEntity.ok(cards.stream().map(PlayerController::toCardResponse).toList());
+    public ResponseEntity<List<CardCollectionItemResponse>> getCollection(@AuthenticationPrincipal Player player) {
+        return ResponseEntity.ok(cardService.getPlayerCollection(player.getId()));
     }
 
     @Operation(summary = "Recycle player cards")
@@ -91,7 +91,7 @@ public class PlayerController {
             @ApiResponse(responseCode = "400", description = "Reward already claimed today", content = @Content()),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content()),
     })
-    @PostMapping("/me/claim-reward")
+    @GetMapping("/me/claim-reward")
     public ResponseEntity<Void> claimReward(@AuthenticationPrincipal Player player) {
         playerService.claimDailyReward(player);
         return ResponseEntity.noContent().build();
@@ -116,7 +116,7 @@ public class PlayerController {
                 .baseCardId(card.getBaseCard().getId())
                 .cardName(card.getBaseCard().getName())
                 .rarity(card.getRarity().getName())
-                .imageUrl(card.getBaseCard().getImageUrl())
+                .slug(card.getBaseCard().getSlug())
                 .recycleValue(card.getRarity().getRecycleValue())
                 .statHp(card.getStatHp())
                 .statAtk(card.getStatAtk())
