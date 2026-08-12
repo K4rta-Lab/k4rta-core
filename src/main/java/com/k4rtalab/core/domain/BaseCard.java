@@ -28,55 +28,20 @@ public class BaseCard {
     private String name;
 
     @PositiveOrZero
-    @Column(name = "stat_hp_min", nullable = false)
-    private int statHpMin;
+    @Column(name = "stat_glamour", nullable = false)
+    private int statGlamour;
 
     @PositiveOrZero
-    @Column(name = "stat_hp_avg", nullable = false)
-    private int statHpAvg;
+    @Column(name = "stat_shade", nullable = false)
+    private int statShade;
 
     @PositiveOrZero
-    @Column(name = "stat_hp_max", nullable = false)
-    private int statHpMax;
+    @Column(name = "stat_energy", nullable = false)
+    private int statEnergy;
 
-    @PositiveOrZero
-    @Column(name = "stat_atk_min", nullable = false)
-    private int statAtkMin;
-
-    @PositiveOrZero
-    @Column(name = "stat_atk_avg", nullable = false)
-    private int statAtkAvg;
-
-    @PositiveOrZero
-    @Column(name = "stat_atk_max", nullable = false)
-    private int statAtkMax;
-
-    @PositiveOrZero
-    @Column(name = "stat_def_min", nullable = false)
-    private int statDefMin;
-
-    @PositiveOrZero
-    @Column(name = "stat_def_avg", nullable = false)
-    private int statDefAvg;
-
-    @PositiveOrZero
-    @Column(name = "stat_def_max", nullable = false)
-    private int statDefMax;
-
-    @PositiveOrZero
-    @Column(name = "stat_spd_min", nullable = false)
-    private int statSpdMin;
-
-    @PositiveOrZero
-    @Column(name = "stat_spd_avg", nullable = false)
-    private int statSpdAvg;
-
-    @PositiveOrZero
-    @Column(name = "stat_spd_max", nullable = false)
-    private int statSpdMax;
-
-    @Column(name = "image_url")
-    private String imageUrl;
+    @ManyToOne
+    @JoinColumn(name = "rarity_id")
+    private Rarity rarity;
 
     @Column(name = "slug", nullable = false, unique = true)
     private String slug;

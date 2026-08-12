@@ -11,9 +11,9 @@ public class TradeListingResponse {
     private UUID id;
     private UUID ownerId;
     private String ownerUsername;
-    private PlayerCardResponse offeredCard;
-    private UUID wantedBaseCardId;
-    private String wantedBaseCardName;
+    private BaseCardResponse offeredCard;
+    private UUID wantedCardId;
+    private String wantedCardName;
     private String status;
     private LocalDateTime createdAt;
 }

@@ -13,14 +13,20 @@ import java.util.List;
 public interface PlayerCardMapper {
     @Mapping(source = "baseCard.id", target = "baseCardId")
     @Mapping(source = "baseCard.name", target = "cardName")
-    @Mapping(source = "rarity.name", target = "rarity")
-    @Mapping(source = "rarity.recycleValue", target = "recycleValue")
+    @Mapping(source = "baseCard.rarity.name", target = "rarity")
+    @Mapping(source = "baseCard.rarity.recycleValue", target = "recycleValue")
     @Mapping(source = "baseCard.slug", target = "slug")
+    @Mapping(source = "baseCard.statGlamour", target = "statGlamour")
+    @Mapping(source = "baseCard.statShade", target = "statShade")
+    @Mapping(source = "baseCard.statEnergy", target = "statEnergy")
     PlayerCardResponse toCardResponse(PlayerCard card);
 
     @Mapping(source = "baseCard.name", target = "cardName")
-    @Mapping(source = "rarity.name", target = "rarity")
+    @Mapping(source = "baseCard.rarity.name", target = "rarity")
     @Mapping(source = "baseCard.slug", target = "slug")
+    @Mapping(source = "baseCard.statGlamour", target = "statGlamour")
+    @Mapping(source = "baseCard.statShade", target = "statShade")
+    @Mapping(source = "baseCard.statEnergy", target = "statEnergy")
     CardCollectionItemResponse toCollectionItem(PlayerCard card);
 
     List<PlayerCardResponse> toResponseList(List<PlayerCard> cards);

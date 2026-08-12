@@ -2,17 +2,19 @@ package com.k4rtalab.core.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @Builder
-public class OfferResponse {
+public class BaseCardResponse {
     private UUID id;
-    private UUID requestId;
-    private UUID offererId;
-    private String offererUsername;
-    private BaseCardResponse offeredCard;
-    private String status;
+    private String cardName;
+    private int statGlamour;
+    private int statShade;
+    private int statEnergy;
+    private String rarity;
+    private String slug;
     private LocalDateTime createdAt;
 }

@@ -115,13 +115,12 @@ public class PlayerController {
                 .id(card.getId())
                 .baseCardId(card.getBaseCard().getId())
                 .cardName(card.getBaseCard().getName())
-                .rarity(card.getRarity().getName())
+                .rarity(card.getBaseCard().getRarity().getName())
+                .recycleValue(card.getBaseCard().getRarity().getRecycleValue())
                 .slug(card.getBaseCard().getSlug())
-                .recycleValue(card.getRarity().getRecycleValue())
-                .statHp(card.getStatHp())
-                .statAtk(card.getStatAtk())
-                .statDef(card.getStatDef())
-                .statSpd(card.getStatSpd())
+                .statGlamour(card.getBaseCard().getStatGlamour())
+                .statShade(card.getBaseCard().getStatShade())
+                .statEnergy(card.getBaseCard().getStatEnergy())
                 .obtainedAt(card.getObtainedAt())
                 .build();
     }

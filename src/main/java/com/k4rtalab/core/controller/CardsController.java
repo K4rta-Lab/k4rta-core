@@ -2,10 +2,10 @@ package com.k4rtalab.core.controller;
 
 import com.k4rtalab.core.domain.BaseCard;
 import com.k4rtalab.core.dto.response.BaseCardSummaryResponse;
+import com.k4rtalab.core.mapper.BaseCardMapper;
 import com.k4rtalab.core.repository.BaseCardRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +26,7 @@ import java.util.List;
 public class CardsController {
 
     private final BaseCardRepository baseCardRepository;
+    private final BaseCardMapper baseCardMapper;
 
     @Operation(summary = "Get all base cards or search by name")
     @ApiResponse(
@@ -41,10 +42,6 @@ public class CardsController {
                 ? baseCardRepository.findAll()
                 : baseCardRepository.findByNameContainingIgnoreCase(search);
 
-        List<BaseCardSummaryResponse> response = cards.stream()
-                .map(card -> new BaseCardSummaryResponse(card.getId(), card.getName(), card.getSlug()))
-                .toList();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(baseCardMapper.toSummaryResponses(cards));
     }
 }

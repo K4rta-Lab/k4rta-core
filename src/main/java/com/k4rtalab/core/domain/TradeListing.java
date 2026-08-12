@@ -13,7 +13,7 @@ import java.util.UUID;
 @Entity
 @Table(
         name = "trade_listings",
-        indexes = {@Index(name = "idx_listings_status", columnList = "status"), @Index(name = "idx_listings_wanted", columnList = "wanted_base_card_id")}
+        indexes = {@Index(name = "idx_listings_status", columnList = "status"), @Index(name = "idx_listings_wanted", columnList = "wanted_card_id")}
 )
 @Getter
 @Setter
@@ -35,12 +35,12 @@ public class TradeListing {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offered_card_id", nullable = false)
-    private PlayerCard offeredCard;
+    private BaseCard offeredCard;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wanted_base_card_id", nullable = false)
-    private BaseCard wantedBaseCard;
+    @JoinColumn(name = "wanted_card_id", nullable = false)
+    private BaseCard wantedCard;
 
     @NotNull
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)

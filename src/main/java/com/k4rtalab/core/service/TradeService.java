@@ -39,7 +39,7 @@ public class TradeService {
      * @param page             The page number (0-indexed).
      * @param size             The number of items per page.
      * @param status           The status of the listing (e.g., OPEN, COMPLETED).
-     * @param wantedBaseCardId The ID of the base card being sought.
+     * @param wantedCardId The ID of the base card being sought.
      * @param ownerId          The ID of the player who created the listing.
      * @return A list of trade listings matching the criteria.
      */
@@ -48,14 +48,14 @@ public class TradeService {
             int page,
             int size,
             String status,
-            UUID wantedBaseCardId,
+            UUID wantedCardId,
             UUID ownerId
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         Specification<TradeListing> spec = Specification
                 .where(TradeSpecifications.<TradeListing>hasStatus(status))
-                .and(TradeSpecifications.hasWantedBaseCard(wantedBaseCardId))
+                .and(TradeSpecifications.hasWantedBaseCard(wantedCardId))
                 .and(TradeSpecifications.hasOwner(ownerId));
 
         return tradeListingRepository.findAll(spec, pageable).getContent();
@@ -64,32 +64,32 @@ public class TradeService {
     /**
      * Creates a new trade listing.
      *
-     * @param ownerId          The ID of the player creating the listing.
-     * @param offeredCardId    The ID of the player card being offered.
-     * @param wantedBaseCardId The ID of the base card being requested.
+     * @param ownerId           The ID of the player creating the listing.
+     * @param offereCardId The ID of the base card being offered (player must own at least one copy).
+     * @param wantedCardId  The ID of the base card being requested.
      * @return The created TradeListing.
-     * @throws ResourceNotFoundException   if the player, offered card, or wanted base card is not found.
-     * @throws UnauthorizedActionException if the offered card does not belong to the player.
+     * @throws ResourceNotFoundException   if the player or either base card is not found.
+     * @throws UnauthorizedActionException if the player does not own a copy of the offered card.
      */
     @Transactional
-    public TradeListing createListing(UUID ownerId, UUID offeredCardId, UUID wantedBaseCardId) {
+    public TradeListing createListing(UUID ownerId, UUID offereCardId, UUID wantedCardId) {
         Player owner = playerRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Player not found: " + ownerId));
 
-        PlayerCard offeredCard = playerCardRepository.findById(offeredCardId)
-                .orElseThrow(() -> new ResourceNotFoundException("PlayerCard not found: " + offeredCardId));
+        BaseCard offeredCard = baseCardRepository.findById(offereCardId)
+                .orElseThrow(() -> new ResourceNotFoundException("BaseCard not found: " + offereCardId));
 
-        BaseCard wantedCard = baseCardRepository.findById(wantedBaseCardId)
-                .orElseThrow(() -> new ResourceNotFoundException("BaseCard not found: " + wantedBaseCardId));
+        BaseCard wantedCard = baseCardRepository.findById(wantedCardId)
+                .orElseThrow(() -> new ResourceNotFoundException("BaseCard not found: " + wantedCardId));
 
-        if (!offeredCard.getOwner().getId().equals(ownerId)) {
-            throw new UnauthorizedActionException("Card does not belong to this player: " + ownerId);
+        if (!playerCardRepository.existsByOwnerIdAndBaseCardId(ownerId, offereCardId)) {
+            throw new UnauthorizedActionException("Player does not own a copy of this card: " + offereCardId);
         }
 
         TradeListing listing = TradeListing.builder()
                 .owner(owner)
                 .offeredCard(offeredCard)
-                .wantedBaseCard(wantedCard)
+                .wantedCard(wantedCard)
                 .build();
 
         return tradeListingRepository.save(listing);
@@ -126,7 +126,7 @@ public class TradeService {
      * @param page             The page number (0-indexed).
      * @param size             The number of items per page.
      * @param status           The status of the request (e.g., OPEN, COMPLETED).
-     * @param wantedBaseCardId The ID of the base card being sought.
+     * @param wantedCardId The ID of the base card being sought.
      * @param ownerId          The ID of the player who created the request.
      * @return A list of trade requests matching the criteria.
      */
@@ -135,14 +135,14 @@ public class TradeService {
             int page,
             int size,
             String status,
-            UUID wantedBaseCardId,
+            UUID wantedCardId,
             UUID ownerId
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         Specification<TradeRequest> spec = Specification
                 .where(TradeSpecifications.<TradeRequest>hasStatus(status))
-                .and(TradeSpecifications.hasWantedBaseCard(wantedBaseCardId))
+                .and(TradeSpecifications.hasWantedBaseCard(wantedCardId))
                 .and(TradeSpecifications.hasOwner(ownerId));
 
         return tradeRequestRepository.findAll(spec, pageable).getContent();
@@ -165,21 +165,21 @@ public class TradeService {
      * Creates a new trade request.
      *
      * @param ownerId          The ID of the player creating the request.
-     * @param wantedBaseCardId The ID of the base card being requested.
+     * @param wantedCardId The ID of the base card being requested.
      * @return The created TradeRequest.
      * @throws ResourceNotFoundException if the player or wanted base card is not found.
      */
     @Transactional
-    public TradeRequest createRequest(UUID ownerId, UUID wantedBaseCardId) {
+    public TradeRequest createRequest(UUID ownerId, UUID wantedCardId) {
         Player owner = playerRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Player not found: " + ownerId));
 
-        BaseCard wantedCard = baseCardRepository.findById(wantedBaseCardId)
-                .orElseThrow(() -> new ResourceNotFoundException("BaseCard not found: " + wantedBaseCardId));
+        BaseCard wantedCard = baseCardRepository.findById(wantedCardId)
+                .orElseThrow(() -> new ResourceNotFoundException("BaseCard not found: " + wantedCardId));
 
         TradeRequest request = TradeRequest.builder()
                 .owner(owner)
-                .wantedBaseCard(wantedCard)
+                .wantedCard(wantedCard)
                 .build();
 
         return tradeRequestRepository.save(request);
@@ -234,11 +234,11 @@ public class TradeService {
         Player offerer = playerRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Player not found: " + ownerId));
 
-        PlayerCard offeredCard = playerCardRepository.findById(offeredCardId)
+        BaseCard offeredCard = baseCardRepository.findById(offeredCardId)
                 .orElseThrow(() -> new ResourceNotFoundException("PlayerCard not found: " + offeredCardId));
 
-        if (!offeredCard.getOwner().getId().equals(ownerId)) {
-            throw new UnauthorizedActionException("Card does not belong to this player: " + ownerId);
+        if (!playerCardRepository.existsByOwnerIdAndBaseCardId(ownerId, offeredCardId)) {
+            throw new UnauthorizedActionException("Player does not own a copy of this card: " + offeredCardId);
         }
 
         TradeOffer offer = TradeOffer.builder()
@@ -279,9 +279,12 @@ public class TradeService {
 
 
         // Atomic swap — everything in the same transaction
-        PlayerCard offeredCard = offer.getOfferedCard();
-        offeredCard.setOwner(request.getOwner());
-        playerCardRepository.save(offeredCard);
+        PlayerCard cardToTransfer = playerCardRepository
+                .findFirstByOwnerIdAndBaseCardId(offer.getOfferer().getId(), offer.getOfferedCard().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Offerer no longer owns a copy of the offered card: " + offer.getOfferedCard().getId()));
+
+        cardToTransfer.setOwner(request.getOwner());
+        playerCardRepository.save(cardToTransfer);
 
         // Close request and accept offer
         request.setStatus(TradeStatus.COMPLETED);

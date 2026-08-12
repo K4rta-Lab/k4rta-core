@@ -1,9 +1,7 @@
 package com.k4rtalab.core.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -33,27 +31,6 @@ public class PlayerCard {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "base_card_id", nullable = false)
     private BaseCard baseCard;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rarity_id", nullable = false)
-    private Rarity rarity;
-
-    @Min(0)
-    @Column(name = "stat_hp", nullable = false)
-    private int statHp;
-
-    @Min(0)
-    @Column(name = "stat_atk", nullable = false)
-    private int statAtk;
-
-    @Min(0)
-    @Column(name = "stat_def", nullable = false)
-    private int statDef;
-
-    @Min(0)
-    @Column(name = "stat_spd", nullable = false)
-    private int statSpd;
 
     @Column(name = "pack_seed")
     private Long packSeed;

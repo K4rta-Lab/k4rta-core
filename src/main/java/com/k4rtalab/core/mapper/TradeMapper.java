@@ -1,5 +1,6 @@
 package com.k4rtalab.core.mapper;
 
+import com.k4rtalab.core.domain.Rarity;
 import com.k4rtalab.core.domain.TradeListing;
 import com.k4rtalab.core.domain.TradeOffer;
 import com.k4rtalab.core.domain.TradeRequest;
@@ -11,20 +12,20 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = PlayerCardMapper.class)
+@Mapper(componentModel = "spring", uses = BaseCardMapper.class)
 public interface TradeMapper {
     @Mapping(source = "owner.id", target = "ownerId")
     @Mapping(source = "owner.username", target = "ownerUsername")
     @Mapping(source = "offeredCard", target = "offeredCard")
-    @Mapping(source = "wantedBaseCard.id", target = "wantedBaseCardId")
-    @Mapping(source = "wantedBaseCard.name", target = "wantedBaseCardName")
+    @Mapping(source = "wantedCard.id", target = "wantedCardId")
+    @Mapping(source = "wantedCard.name", target = "wantedCardName")
     @Mapping(source = "status", target = "status")
     TradeListingResponse toListingResponse(TradeListing listing);
 
     @Mapping(source = "owner.id", target = "ownerId")
     @Mapping(source = "owner.username", target = "ownerUsername")
-    @Mapping(source = "wantedBaseCard.id", target = "wantedBaseCardId")
-    @Mapping(source = "wantedBaseCard.name", target = "wantedBaseCardName")
+    @Mapping(source = "wantedCard.id", target = "wantedCardId")
+    @Mapping(source = "wantedCard.name", target = "wantedCardName")
     @Mapping(source = "status", target = "status")
     TradeRequestResponse toRequestResponse(TradeRequest request);
 
@@ -35,10 +36,13 @@ public interface TradeMapper {
     @Mapping(source = "status", target = "status")
     OfferResponse toOfferResponse(TradeOffer offer);
 
-
     List<TradeListingResponse> toListingResponses(List<TradeListing> listings);
 
     List<TradeRequestResponse> toRequestResponses(List<TradeRequest> requests);
 
     List<OfferResponse> toOfferResponses(List<TradeOffer> offers);
+
+    default String mapRarityToString(Rarity rarity) {
+        return rarity != null ? rarity.getName() : null;
+    }
 }

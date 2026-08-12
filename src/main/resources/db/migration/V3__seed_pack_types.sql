@@ -8,27 +8,27 @@ SELECT p.id, r.id,
        CASE p.name
            WHEN 'BASIC' THEN
                CASE r.name
-                   WHEN 'COMMON'    THEN 0.6000
-                   WHEN 'UNCOMMON'  THEN 0.3000
-                   WHEN 'RARE'      THEN 0.0800
-                   WHEN 'LEGENDARY' THEN 0.0150
-                   WHEN 'MYTHIC'    THEN 0.0050
+                   WHEN 'local'    THEN 0.6000
+                   WHEN 'trending'  THEN 0.3000
+                   WHEN 'iconic'      THEN 0.0800
+                   WHEN 'all-star' THEN 0.0150
+                   WHEN 'supreme'    THEN 0.0050
                    END
            WHEN 'GOLD' THEN
                CASE r.name
-                   WHEN 'COMMON'    THEN 0.3500
-                   WHEN 'UNCOMMON'  THEN 0.3500
-                   WHEN 'RARE'      THEN 0.2000
-                   WHEN 'LEGENDARY' THEN 0.0800
-                   WHEN 'MYTHIC'    THEN 0.0200
+                   WHEN 'local'    THEN 0.3500
+                   WHEN 'trending'  THEN 0.3500
+                   WHEN 'iconic'      THEN 0.2000
+                   WHEN 'all-star' THEN 0.0800
+                   WHEN 'supreme'    THEN 0.0200
                    END
            WHEN 'PREMIUM' THEN
                CASE r.name
-                   WHEN 'COMMON'    THEN 0.1000
-                   WHEN 'UNCOMMON'  THEN 0.2500
-                   WHEN 'RARE'      THEN 0.3500
-                   WHEN 'LEGENDARY' THEN 0.2200
-                   WHEN 'MYTHIC'    THEN 0.0800
+                   WHEN 'local'    THEN 0.1000
+                   WHEN 'trending'  THEN 0.2500
+                   WHEN 'iconic'      THEN 0.3500
+                   WHEN 'all-star' THEN 0.2200
+                   WHEN 'supreme'    THEN 0.0800
                    END
            END
 FROM pack_types p

@@ -16,8 +16,8 @@ public class CardCollectionItemResponse {
     private String cardName;
     private String rarity;
     private String slug;
-    private int statHp;
-    private int statAtk;
-    private int statDef;
-    private int statSpd;
+    private int statGlamour;
+    private int statShade;
+    private int statEnergy;
+    private long amount;
 }

@@ -11,8 +11,8 @@ public class TradeRequestResponse {
     private UUID id;
     private UUID ownerId;
     private String ownerUsername;
-    private UUID wantedBaseCardId;
-    private String wantedBaseCardName;
+    private UUID wantedCardId;
+    private String wantedCardName;
     private String status;
     private LocalDateTime createdAt;
 }

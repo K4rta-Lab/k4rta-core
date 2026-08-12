@@ -31,8 +31,8 @@ public class TradeRequest {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wanted_base_card_id", nullable = false)
-    private BaseCard wantedBaseCard;
+    @JoinColumn(name = "wanted_card_id", nullable = false)
+    private BaseCard wantedCard;
 
     @NotNull
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)

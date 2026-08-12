@@ -1,9 +1,18 @@
 package com.k4rtalab.core.dto.response;
 
+import lombok.Builder;
+import lombok.Data;
+
 import java.util.UUID;
 
-public record BaseCardSummaryResponse(
-        UUID id,
-        String cardName,
-        String slug
-) {}
+@Data
+@Builder
+public class BaseCardSummaryResponse {
+    private UUID id;
+    private String cardName;
+    private String rarity;
+    private String slug;
+    private int statGlamour;
+    private int statShade;
+    private int statEnergy;
+}

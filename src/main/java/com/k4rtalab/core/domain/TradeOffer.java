@@ -35,7 +35,7 @@ public class TradeOffer {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offered_card_id", nullable = false)
-    private PlayerCard offeredCard;
+    private BaseCard offeredCard;
 
     @NotNull
     @Enumerated(EnumType.STRING)
